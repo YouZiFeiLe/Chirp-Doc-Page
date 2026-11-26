@@ -1,0 +1,23 @@
+{
+  "name": "chirp-doc-page",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vitepress dev docs",
+    "build": "vitepress build docs && node scripts/check-links.mjs",
+    "preview": "vitepress preview docs",
+    "sync:errors": "node scripts/sync-errors.mjs"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "devDependencies": {
+    "@lucide/vue": "1.80.0",
+    "parse5": "^7.3.0",
+    "vitepress": "1.6.4",
+    "vue": "3.5.46"
+  },
+  "overrides": {
+    "vite": "6.4.6"
+  }
+}

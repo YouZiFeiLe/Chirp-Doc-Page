@@ -1,0 +1,32 @@
+# Android Client Architecture
+
+Built with **[Kotlin](https://kotlinlang.org/) + [Jetpack Compose](https://developer.android.com/compose) + [Material 3](https://m3.material.io/)**, supporting **Android 15+ (API 35)** (`targetSdk = 37`) with universal APKs bundling `arm64-v8a` and `x86_64`. Matches Apple's identity, group, and E2EE semantics while integrating natively with [Android Keystore](https://developer.android.com/privacy-and-security/keystore), Core-Telecom, and foreground call services.
+
+## Design Philosophy & Module Layout
+
+Uses unidirectional state (`MainViewModel` + Repositories + `CallService`) separating encrypted storage, network coordination, and live media execution:
+
+| Module / Core File | Responsibility & Implementation Notes |
+| --- | --- |
+| [`ServerRepository.kt`](https://github.com/YouZiFeiLe/Chirp/blob/main/Client/android/app/src/main/kotlin/cn/youzifeile/chirp/data/ServerRepository.kt) · [`ChirpHttp.kt`](https://github.com/YouZiFeiLe/Chirp/blob/main/Client/android/app/src/main/kotlin/cn/youzifeile/chirp/data/ChirpHttp.kt) | Discovery, policy checks, Chrome Custom Tabs Passkey callbacks (`cn.youzifeile.chirp.android://auth/callback`), and redirect-blocking HTTP client. |
+| [`IdentityVault.kt`](https://github.com/YouZiFeiLe/Chirp/blob/main/Client/android/app/src/main/kotlin/cn/youzifeile/chirp/data/IdentityVault.kt) | Encrypts device keys and checkpoints in `noBackupFilesDir/identity-v5` using **Android Keystore AES-256-GCM** (alias `chirp-identity-v5`, AAD bound to `origin\|account`) via `AtomicFile`. |
+| [`AccountIdentity.kt`](https://github.com/YouZiFeiLe/Chirp/blob/main/Client/android/app/src/main/kotlin/cn/youzifeile/chirp/data/AccountIdentity.kt) · [`Authorization.kt`](https://github.com/YouZiFeiLe/Chirp/blob/main/Client/android/app/src/main/kotlin/cn/youzifeile/chirp/data/Authorization.kt) | Verifies APK `assets/AuthorizationTrust.json` signatures; **requires both** a valid snapshot signature **and** a successful blacklist refresh before extending authorization deadlines. |
+| [`NetworkClock.kt`](https://github.com/YouZiFeiLe/Chirp/blob/main/Client/android/app/src/main/kotlin/cn/youzifeile/chirp/data/NetworkClock.kt) | Enforces reliable clock verification prior to sign-in or device approval (`NETWORK_TIME_REQUIRED`). |
+| [`CallController.kt`](https://github.com/YouZiFeiLe/Chirp/blob/main/Client/android/app/src/main/kotlin/cn/youzifeile/chirp/media/CallController.kt) · [`CallService.kt`](https://github.com/YouZiFeiLe/Chirp/blob/main/Client/android/app/src/main/kotlin/cn/youzifeile/chirp/media/CallService.kt) | Integrates **Core-Telecom** and foreground notifications to sustain calls across screen locks and Bluetooth route switches; swiping out of Recents tears down calls and memory tokens cleanly. |
+| [`SecureGroup.kt`](https://github.com/YouZiFeiLe/Chirp/blob/main/Client/android/app/src/main/kotlin/cn/youzifeile/chirp/media/SecureGroup.kt) · [`MediaPermit.kt`](https://github.com/YouZiFeiLe/Chirp/blob/main/Client/android/app/src/main/kotlin/cn/youzifeile/chirp/media/MediaPermit.kt) | Coroutine-driven group state machine and 3s media lease tracker backed by `SystemClock.elapsedRealtime()` (deep-sleep aware). |
+| [`RoomChat.kt`](https://github.com/YouZiFeiLe/Chirp/blob/main/Client/android/app/src/main/kotlin/cn/youzifeile/chirp/media/RoomChat.kt) · [`RoomAttachments.kt`](https://github.com/YouZiFeiLe/Chirp/blob/main/Client/android/app/src/main/kotlin/cn/youzifeile/chirp/media/RoomAttachments.kt) | Encrypted data-channel chat plus `chirp-attachments` encrypted cache, bandwidth throttling ([`AttachmentBandwidth.kt`](https://github.com/YouZiFeiLe/Chirp/blob/main/Client/android/app/src/main/kotlin/cn/youzifeile/chirp/data/AttachmentBandwidth.kt)), and prefix-verified resume. |
+| [`ChirpApp.kt`](https://github.com/YouZiFeiLe/Chirp/blob/main/Client/android/app/src/main/kotlin/cn/youzifeile/chirp/ui/ChirpApp.kt) · [`AdaptivePane.kt`](https://github.com/YouZiFeiLe/Chirp/blob/main/Client/android/app/src/main/kotlin/cn/youzifeile/chirp/ui/AdaptivePane.kt) | Adaptive phone/foldable/tablet UI, Android 17 LAN permission prompt, and [ZXing](https://github.com/zxing/zxing) camera/gallery QR pairing. |
+
+## Android E2EE Pipeline & C++ JNI Hooks
+
+Gradle patches LiveKit Android (`Client/android/patches/livekit-2.30.0.patch`) and compiles four CMake native targets ([`CMakeLists.txt`](https://github.com/YouZiFeiLe/Chirp/blob/main/Client/android/app/src/main/cpp/CMakeLists.txt)):
+
+1. **Rust OpenMLS JNI bridge** ([`mls_jni.c`](https://github.com/YouZiFeiLe/Chirp/blob/main/Client/android/app/src/main/cpp/mls_jni.c) + [`MlsNative.kt`](https://github.com/YouZiFeiLe/Chirp/blob/main/Client/android/app/src/main/kotlin/cn/youzifeile/chirp/media/MlsNative.kt)): Links Rust OpenMLS `.so` using `CLOCK_BOOTTIME` for 90s/120s key-age enforcement and clears native handles inside `NonCancellable` coroutine blocks.
+2. **Audio preprocessing & RNNoise** ([`rnnoise_jni.c`](https://github.com/YouZiFeiLe/Chirp/blob/main/Client/android/app/src/main/cpp/rnnoise_jni.c) + [`RNNoiseProcessor.kt`](https://github.com/YouZiFeiLe/Chirp/blob/main/Client/android/app/src/main/kotlin/cn/youzifeile/chirp/media/RNNoiseProcessor.kt)): Plugs into WebRTC `JavaAudioDeviceModule` supporting **WebRTC AEC + RNNoise (Default)**, **WebRTC Built-in NS**, and **AEC Only** with `−45 dBFS` default VAD.
+3. **Outgoing self-check & incoming pre-Opus verifier** ([`voice_receiver.cpp`](https://github.com/YouZiFeiLe/Chirp/blob/main/Client/android/app/src/main/cpp/voice_receiver.cpp) + [`VoiceKeys.kt`](https://github.com/YouZiFeiLe/Chirp/blob/main/Client/android/app/src/main/kotlin/cn/youzifeile/chirp/media/VoiceKeys.kt)):
+   - **Outbound double-check**: `VoiceKeys.authenticatesOutgoing` validates active SSRC, slot, decryption self-test, and `< 65,536` nonce ceiling prior to releasing any encrypted RTP frame;
+   - **Inbound replay guard**: C++ `voice_receiver.cpp` verifies `AES/GCM/NoPadding` before Opus decoding and tracks seen 96-bit IVs per sender/key up to 65,536 frames;
+   - **Dual-ABI vtable testing**: Because WebRTC `150.7871.08` C++ vtables differ between `arm64-v8a` and `x86_64`, `VoiceTransportTest` runs separately on both ABIs.
+
+> [!TIP] Building & Open-Source Release Signing
+> See [Native Client Builds · Android](/en/development/clients#android) for JDK/NDK toolchains, Gradle tasks, and the public release key fingerprint (`FE:2C:66:...`).

@@ -1,0 +1,69 @@
+# `.chirpkey` Offline Recovery File Specification (v1)
+
+`.chirpkey` is the universal offline account root backup format shared across iOS, macOS, Windows, and Android. Holding the file plus its recovery passphrase lets any client decrypt your Ed25519 root key purely offline before signing in via Passkey on the same server origin to authorize new hardware.
+
+> [!NOTE] Backup scope
+> `.chirpkey` seals **solely your account Ed25519 root keypair for one server origin**. It never contains Passkeys, device-specific private keys, Bearers, friend trust, MLS secrets, chat history, or file keys. [Devices & Recovery](/en/guide/devices)
+
+<ChirpKeyLayoutDiagram />
+
+## Filename & Magic Verification
+
+- **Extension & Magic**: Fixed `.chirpkey` extension starting with exact 8-byte ASCII **`CHIRPKEY`** (`cn.youzifeile.chirp.chirpkey` UTI on Apple).
+- **Legacy format rejection**: All clients strictly reject retired `CHRIPKEY` headers even if renamed—modified header bytes invalidate the trailing GCM tag.
+- **Suggested filename**: `<username>_<YYYY-MM-DD>_<platform>.chirpkey` (users may rename freely; recovery trusts only authenticated payload contents).
+
+## Passphrase Rules & Memory Hygiene
+
+- **Passphrase rules**: Minimum **16 Unicode scalar values**, maximum **1,024 UTF-8 bytes**. Preserves casing, leading/trailing spaces, and raw UTF-8 code points verbatim without normalization.
+- **Offline brute-force warning**: Any holder of `.chirpkey` can attempt offline password guesses, so choose a high-entropy passphrase; administrators cannot reset it, and re-encrypting newer copies does not invalidate previously leaked older copies.
+- **Minimal key residency**: Passphrases, Argon2id-derived keys, and decrypted root seeds reside strictly in transient RAM during setup/recovery and zeroize immediately afterward—never logged, copied to clipboard, or saved into device keystores.
+
+## Binary Layout (v1)
+
+Sequence: **54-byte fixed header + `N`-byte AES-256-GCM ciphertext + 16-byte GCM authentication tag**, total file size strictly **71 to 65,606 bytes** (unsigned Big-Endian integers):
+
+| Offset | Bytes | Field | v1 Fixed Constraint |
+| ---: | ---: | --- | --- |
+| `0` | `8` | Magic | ASCII `CHIRPKEY` (`43 48 49 52 50 4B 45 59`) |
+| `8` | `2` | Container Version | `1` |
+| `10` | `2` | Cipher Suite | `1` (Argon2id + AES-256-GCM) |
+| `12` | `4` | Argon2id Memory | `65536` KiB (64 MiB) |
+| `16` | `4` | Argon2id Iterations | `3` |
+| `20` | `2` | Argon2id Parallelism | `4` |
+| `22` | `16` | Salt | Fresh CSPRNG per export |
+| `38` | `12` | GCM Nonce | Fresh CSPRNG per export (never reused under same key) |
+| `50` | `4` | Ciphertext Length `N` | `1 ≤ N ≤ 65536` (exact plaintext JSON length) |
+| `54` | `N` | Ciphertext | AES-256-GCM encrypted UTF-8 JSON |
+| `54 + N` | `16` | GCM Auth Tag | EOF immediately follows tag (no trailing bytes) |
+
+Key derivation uses **Argon2id v1.3 (`0x13`)** into a 32-byte AES-256 key, with **all 54 header bytes passed as AAD**. References: [RFC 9106 Parameter Selection](https://www.rfc-editor.org/rfc/rfc9106.html#section-4) · [OWASP Cryptographic Storage](https://cheatsheetseries.owasp.org/cheatsheets/Cryptographic_Storage_Cheat_Sheet.html#cipher-modes)
+
+## Plaintext JSON Schema
+
+Must parse cleanly as a strict UTF-8 JSON object containing **exact 10 required fields** (zero duplicate/unknown keys):
+
+| Field | Type | Validation |
+| --- | --- | --- |
+| `payload_version` | int | `1` |
+| `identity_protocol` | string | `chirp-mls-authenticated-v5` |
+| `root_algorithm` | string | `Ed25519` |
+| `root_seed` | string | 32B Ed25519 seed in padded Base64 |
+| `root_public_key` | string | 32B Ed25519 public key matching `root_seed` |
+| `service_origin` | string | Canonical origin with explicit port (`:80` / `:443`, ≤ 2048 B) |
+| `account_id` | string | Server immutable account ID (1–128 B) |
+| `username` | string | Display handle at export (≤ 320 B, UI hint only) |
+| `created_at` | string | UTC RFC 3339 ending in `Z` (≤ 64 B) |
+| `source_platform` | string | `iOS`, `macOS`, `Windows`, or `Android` (fully cross-importable) |
+
+## Self-Check Export & Defensive Read Order
+
+1. **Export loop-check**: Encrypt locally, immediately decrypt in RAM with the same passphrase to verify byte-exact JSON roundtrip, and preserve idempotent ciphertext within an interrupted setup flow.
+2. **Wait gate**: Enforce 5s countdown after save before committing root binding; retain draft ciphertext only until initial server activation commits.
+3. **Pre-KDF read validation**: Enforce total size bounds, `CHIRPKEY`, version `1`, suite `1`, exact Argon2id params, `N` bounds, and `file_size === 54 + N + 16` **before** running 64 MiB Argon2id to thwart DoS inputs; collapse bad password and tag failures into one generic unlock error.
+4. **Account binding check**: Re-derive public key from `root_seed` and match against `service_origin`, `account_id`, and server root key before generating a fresh device keypair and activating.
+
+## Cross-Language Test Vectors
+
+[`recovery-v1.json`](https://github.com/YouZiFeiLe/Chirp/blob/main/internal/identity/testdata/recovery-v1.json) (generated by [Go Vector Gen](https://github.com/YouZiFeiLe/Chirp/blob/main/scripts/identity-vectors/main.go)) validates a 453-byte v1 sample (`N = 383`) plus a `retired_file` (`CHRIPKEY`) rejection sample across Rust, Swift, Windows, and Android:
+[Rust Recovery](https://github.com/YouZiFeiLe/Chirp/blob/main/Client/apple/MLS/native/src/recovery.rs) · [Swift Vector Tests](https://github.com/YouZiFeiLe/Chirp/blob/main/Client/apple/MLS/Tests/ChirpMLSTests/RecoveryVectorTests.swift) · [Apple Recovery](https://github.com/YouZiFeiLe/Chirp/blob/main/Client/apple/Shared/RecoveryFile.swift) · [Windows Recovery](https://github.com/YouZiFeiLe/Chirp/blob/main/Client/windows/engine/login_windows.go) · [Android Recovery](https://github.com/YouZiFeiLe/Chirp/blob/main/Client/android/app/src/main/kotlin/cn/youzifeile/chirp/data/IdentitySetup.kt)
