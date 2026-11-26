@@ -16,7 +16,7 @@ Chirp separates identity into two layers: an account **[Passkey (WebAuthn)](http
 > For privacy, request IDs cannot be retrieved once you close the confirmation page, and the server retains at most **100 pending registrations** at a time. If you lose your code, ask your administrator to delete the old entry in the admin console so you can register again.
 
 <figure class="product-figure">
-  <a href="/images/web-register.png" aria-label="Open full-size registration page screenshot"><img src="/images/web-register.png" width="1440" height="1000" loading="lazy" alt="Chirp registration page showing username input and Create Passkey & Apply button" /></a>
+  <a href="/images/web-register.png" aria-label="Open full-size registration page screenshot"><img src="/images/web-register.png" width="1440" height="1000" loading="lazy" alt="Chirp registration page showing nickname input and Create Passkey & Submit button" /></a>
   <figcaption>The browser registration page. After Passkey creation, the full request ID appears for one-click copying.</figcaption>
 </figure>
 

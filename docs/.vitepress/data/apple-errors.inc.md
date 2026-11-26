@@ -1,15 +1,21 @@
 <!-- 由 npm run sync:errors 从 upstream.json 指定的公开源码快照生成。 -->
 | 错误码 | 简体中文 | English |
 | --- | --- | --- |
-| `IDENTITY_BLACKLISTED` | 此账号或设备已被永久撤销，恢复文件不能解除封禁。 | This account or device is permanently revoked. A recovery file cannot remove a ban. |
 | `REGISTRATION_PENDING` | 注册申请正在等待管理员批准。 | Your registration is waiting for administrator approval. |
 | `REGISTRATION_REJECTED` | 注册申请已被拒绝或删除，请重新申请。 | Your registration was rejected or deleted. Submit a new request. |
+| `IDENTITY_BLACKLISTED` | 此账号或设备已被永久撤销，恢复文件不能解除封禁。 | This account or device is permanently revoked. A recovery file cannot remove a ban. |
 | `IDENTITY_CONFLICT` | 此账号已绑定不同的根身份，请使用已有设备授权或正确恢复文件。 | The account is bound to a different root. Authorize from an existing device or use the correct recovery file. |
 | `CURRENT_DEVICE` | 不能自助撤销当前设备。 | You cannot revoke the current device yourself. |
-| `NETWORK_TIME_REQUIRED` | 请先通过系统时间校验，再登录或授权设备。 | Verify your system time before signing in or approving a device. |
 | `LAST_DEVICE` | 必须至少保留一台有效设备。 | Keep at least one valid device. |
 | `SOCIAL_CONFLICT` | 请先同步最新好友状态后重试。 | Sync the latest friend state and try again. |
 | `CLIENT_AUTHORIZATION_STALE` | 授权状态缺失或已过期，聊天已停止。 | Authorization is missing or expired. Chat has stopped. |
+| `DEVICE_IDENTITY_REQUIRED` | 请先由可信旧设备授权本设备，或建立首次身份，再登录。旧登录不会提前切换。 | Approve this device with a trusted old device, or create your first identity, before signing in. Your old sign-in stays active until then. |
+| `DEVICE_PAIRING_INVALID` | 设备配对已过期、取消或发生冲突，请重新生成二维码。 | Device pairing expired, was cancelled, or conflicts with another exchange. Generate a new QR code. |
+| `V5_IDENTITY_INVALID` | 设备身份、签名或授权证明无法验证，请检查设备身份并重试。不会自动重置已验证身份。 | The device identity, signature, or authorization proof could not be verified. Check your device identity and try again. Verified identities will not be reset automatically. |
+| `ROOM_IDENTITY_REQUIRED` | 请先通过独立可信渠道核验联系人和房主指纹，并导入有效的房间邀请。 | Verify the contact and room owner fingerprints through an independent trusted channel, then import a valid room invitation. |
+| `ROOM_AUTHORIZATION_INVALID` | 房间签名授权、身份或版本无效，请核验房主身份与最新授权。 | The signed room permission, identity, or version is invalid. Verify the owner identity and latest permission. |
+| `CLIENT_IDENTITY_CHANGED` | 已验证的身份或房间授权发生冲突，已停止通话。请核对身份和完整授权历史。 | A verified identity or room permission conflicts with trusted records. The call has stopped. Verify the identity and complete permission history. |
+| `CLIENT_IDENTITY_EXPIRED` | 设备证书或房间签名授权已到期，已停止通话。请由授权者续期。 | The device certificate or signed room permission has expired. The call has stopped. Ask the authorizer to renew it. |
 | `CLIENT_UNEXPECTED` | 操作未完成，请稍后重试 | Something went wrong. Please try again. |
 | `CLIENT_UNKNOWN_SERVER_ERROR` | 服务器返回了未识别的错误，请稍后重试 | The server returned an unrecognized error. Please try again. |
 | `CLIENT_INVALID_RESPONSE` | 服务器没有返回有效响应 | The server returned an invalid response. |
@@ -17,6 +23,7 @@
 | `CLIENT_NETWORK_UNAVAILABLE` | 网络不可用，请检查网络连接 | You are offline. Check your internet connection. |
 | `CLIENT_NETWORK_TIMEOUT` | 连接超时，请稍后重试 | The connection timed out. Please try again. |
 | `CLIENT_NETWORK_FAILURE` | 网络连接中断，请稍后重试 | The network connection failed. Please try again. |
+| `NETWORK_TIME_REQUIRED` | 请先通过系统时间校验，再登录或授权设备。 | Verify your system time before signing in or approving a device. |
 | `CLIENT_INVALID_SERVER_ADDRESS` | 请输入有效的自有服务器地址 | Enter a valid address for your server. |
 | `CLIENT_HOSTED_SERVER_UNSUPPORTED` | 此应用只连接自托管 LiveKit | This app only connects to self-hosted LiveKit servers. |
 | `CLIENT_INSECURE_SERVER_ADDRESS` | 服务器地址必须使用 HTTPS 或 WSS | The server address must use HTTPS or WSS. |
@@ -28,6 +35,7 @@
 | `CLIENT_UPDATE_REQUIRED` | 客户端版本过旧，请自行升级后重试 | This app is too old. Update it and try again. |
 | `CLIENT_VERSION_POLICY_UNAVAILABLE` | 服务器版本要求暂时不可用，请稍后重试 | The server version requirements are temporarily unavailable. Try again later. |
 | `CLIENT_CONFIG_UNAVAILABLE` | 服务器尚未正确配置认证地址，请联系维护者 | The server authentication address is not configured correctly. Contact the administrator. |
+| `DATABASE_UNAVAILABLE` | 服务器数据库暂时不可用，请稍后重试 | The server database is temporarily unavailable. Please try again later. |
 | `CLIENT_INVALID_ROOM_LIST` | 服务器返回的房间列表无效 | The server returned an invalid room list. |
 | `CLIENT_INVALID_PREFLIGHT` | 服务器返回的入房预校验无效，请重新验证 | The room check is invalid. Please verify again. |
 | `CLIENT_INVALID_ADMISSION` | 服务器返回的房间或入房安全策略不匹配 | The room or its security policy does not match the request. |
@@ -97,11 +105,6 @@
 | `CLIENT_CHAT_PACKET_TOO_LONG` | 消息过长，请缩短内容 | The message is too long. Please shorten it. |
 | `CLIENT_CHAT_PREPARATION_FAILED` | 消息内容无效或过长，请缩短内容后重试 | The message is invalid or too long. Shorten it and try again. |
 | `CLIENT_CHAT_SEND_FAILED` | 消息发送未完成，可能未送达；请在安全连接恢复后手动重新发送 | The message may not have been delivered. Send it again after the secure connection is restored. |
-| `CLIENT_ATTACHMENT_CACHE_FAILED` | 附件缓存无法读写或清理，请检查可用空间。 | Attachment storage could not be accessed or cleared. Check available disk space. |
-| `CLIENT_ATTACHMENT_TRANSFER_FAILED` | 附件处理或传输失败，请重试。 | The attachment could not be processed or transferred. Please try again. |
-| `CLIENT_PASSWORD_TOO_LONG` | 密码输入过长，请重新输入 | The password is too long. Please enter it again. |
-| `CLIENT_INVALID_MEMBER_PROFILES` | 成员资料无效，请稍后重试 | The member profiles are invalid. Please try again later. |
-| `DATABASE_UNAVAILABLE` | 服务器数据库暂时不可用，请稍后重试 | The server database is temporarily unavailable. Please try again later. |
 | `ATTACHMENT_INVALID` | 附件信息、格式或完整性校验失败。 | The attachment format or integrity check is invalid. |
 | `ATTACHMENT_UNAVAILABLE` | 附件已失效，或不属于本次入房。 | This attachment expired or belongs to another room visit. |
 | `ATTACHMENT_QUOTA` | 附件大小或缓存配额已达上限。图片最多 20 MiB，文件最多 100 MiB。 | The attachment or storage limit was reached. Images: 20 MiB; files: 100 MiB. |
@@ -112,6 +115,10 @@
 | `ATTACHMENT_INTEGRITY` | 附件完整性校验失败，无法继续传输或打开。 | Attachment integrity verification failed. Transfer and opening are blocked. |
 | `ATTACHMENT_BUSY` | 附件传输繁忙，请稍后重试。 | Attachment transfers are busy. Try again shortly. |
 | `ATTACHMENTS_UNAVAILABLE` | 服务器尚未启用附件功能。 | Attachments are not enabled on this server. |
+| `CLIENT_ATTACHMENT_CACHE_FAILED` | 附件缓存无法读写或清理，请检查可用空间。 | Attachment storage could not be accessed or cleared. Check available disk space. |
+| `CLIENT_ATTACHMENT_TRANSFER_FAILED` | 附件处理或传输失败，请重试。 | The attachment could not be processed or transferred. Please try again. |
+| `CLIENT_PASSWORD_TOO_LONG` | 密码输入过长，请重新输入 | The password is too long. Please enter it again. |
+| `CLIENT_INVALID_MEMBER_PROFILES` | 成员资料无效，请稍后重试 | The member profiles are invalid. Please try again later. |
 | `AVATAR_TOO_LARGE` | 头像图片须小于 5 MB | Your avatar image must be smaller than 5 MB. |
 | `AVATAR_INVALID` | 图片无效，请选择其他静态图片 | This image is invalid. Choose another still image. |
 | `AVATAR_DIMENSIONS_EXCEEDED` | 图片尺寸过大，请缩小后重试 | The image dimensions are too large. Resize it and try again. |
@@ -140,10 +147,3 @@
 | `UNAVAILABLE` | 服务暂时不可用，请稍后重试 | The service is unavailable. Please try again later. |
 | `INVALID_PROOF` | 客户端签名或请求时效无效，请重新加入 | The client signature is invalid or the request has expired. Please rejoin. |
 | `ADMISSION_EXPIRED` | 本次入房已失效，请重新加入 | Your room entry authorization has expired. Please rejoin. |
-| `DEVICE_IDENTITY_REQUIRED` | 请先由可信旧设备授权本设备，或建立首次身份，再登录。旧登录不会提前切换。 | Approve this device with a trusted old device, or create your first identity, before signing in. Your old sign-in stays active until then. |
-| `DEVICE_PAIRING_INVALID` | 设备配对已过期、取消或发生冲突，请重新生成二维码。 | Device pairing expired, was cancelled, or conflicts with another exchange. Generate a new QR code. |
-| `V5_IDENTITY_INVALID` | 设备身份、签名或授权证明无法验证，请检查设备身份并重试。不会自动重置已验证身份。 | The device identity, signature, or authorization proof could not be verified. Check your device identity and try again. Verified identities will not be reset automatically. |
-| `ROOM_IDENTITY_REQUIRED` | 请先通过独立可信渠道核验联系人和房主指纹，并导入有效的房间邀请。 | Verify the contact and room owner fingerprints through an independent trusted channel, then import a valid room invitation. |
-| `ROOM_AUTHORIZATION_INVALID` | 房间签名授权、身份或版本无效，请核验房主身份与最新授权。 | The signed room permission, identity, or version is invalid. Verify the owner identity and latest permission. |
-| `CLIENT_IDENTITY_CHANGED` | 已验证的身份或房间授权发生冲突，已停止通话。请核对身份和完整授权历史。 | A verified identity or room permission conflicts with trusted records. The call has stopped. Verify the identity and complete permission history. |
-| `CLIENT_IDENTITY_EXPIRED` | 设备证书或房间签名授权已到期，已停止通话。请由授权者续期。 | The device certificate or signed room permission has expired. The call has stopped. Ask the authorizer to renew it. |

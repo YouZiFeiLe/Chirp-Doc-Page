@@ -16,7 +16,7 @@ Chirp 采用「账号通行密钥（[Passkey / WebAuthn](https://www.w3.org/TR/w
 > 出于隐私设计，网页关闭后无法再次查询原申请编号；同时服务器最多只保留 **100 条**待审批登记记录。如果不慎丢失编号，请联系管理员在管理台删除旧记录后重新登记。
 
 <figure class="product-figure">
-  <a href="/images/web-register.png" aria-label="打开完整注册页面截图"><img src="/images/web-register.png" width="1440" height="1000" loading="lazy" alt="Chirp 登记页，有昵称输入框和创建通行密钥并申请按钮" /></a>
+  <a href="/images/web-register.png" aria-label="打开完整注册页面截图"><img src="/images/web-register.png" width="1440" height="1000" loading="lazy" alt="Chirp 申请加入页面，包含昵称输入框与创建通行密钥按钮" /></a>
   <figcaption>浏览器中的登记页。创建通行密钥后，页面会展示可供复制的完整申请编号。</figcaption>
 </figure>
 

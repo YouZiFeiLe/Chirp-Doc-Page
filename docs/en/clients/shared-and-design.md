@@ -6,7 +6,7 @@ Chirp's four native clients (macOS, iOS, Android, Windows) and Passkey/Admin web
 
 ## Unified Design System (Chirp — Together)
 
-Every platform implements the semantic palette, spacing, and radii defined in [`design-tokens.json`](https://github.com/YouZiFeiLe/Chirp/blob/main/design-system/chirp-together/design-tokens.json) (v2) across Light, Dark, and High-Contrast modes:
+Every platform implements the semantic palette, spacing, and radii defined in [`design-tokens.json`](https://github.com/YouZiFeiLe/Chirp/blob/main/Client/Branding/design-system/design-tokens.json) (v2) across Light, Dark, and High-Contrast modes:
 
 | Design Dimension | Cross-Platform Standard (`design-tokens.json` v2) |
 | --- | --- |

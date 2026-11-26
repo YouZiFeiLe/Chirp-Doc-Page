@@ -6,7 +6,7 @@ Chirp 的四个原生客户端（macOS、iOS、Android、Windows）以及 Passke
 
 ## 统一设计规范（Chirp — Together）
 
-所有端共享 [`design-tokens.json`](https://github.com/YouZiFeiLe/Chirp/blob/main/design-system/chirp-together/design-tokens.json)（v2）定义的品牌语义视觉规范，确保浅色、深色与系统高对比度模式下都能保持柔和克制的阅读与通话体验：
+所有端共享 [`design-tokens.json`](https://github.com/YouZiFeiLe/Chirp/blob/main/Client/Branding/design-system/design-tokens.json)（v2）定义的品牌语义视觉规范，确保浅色、深色与系统高对比度模式下都能保持柔和克制的阅读与通话体验：
 
 | 视觉维度 | 跨端统一标准（`design-tokens.json` v2） |
 | --- | --- |

@@ -100,7 +100,7 @@ sh scripts/test-open-source-compose.sh chirp-server:local-check
 
 Preview Sign-In, Registration, Admin Console, and macOS views without running SQLite or LiveKit:
 
-- **Web previews**: Run `python3 design-system/chirp-together/preview-web.py` (Python 3.9+), then browse `http://127.0.0.1:18761/` (`?appearance=dark`, `/register?state=receipt`) and `http://127.0.0.1:18762/admin/`. [Preview Script](https://github.com/YouZiFeiLe/Chirp/blob/main/design-system/chirp-together/preview-web.py) · [Design Tokens](https://github.com/YouZiFeiLe/Chirp/blob/main/design-system/chirp-together/design-tokens.json)
+- **Web previews**: Run `python3 Client/Branding/design-system/preview-web.py` (Python 3.9+), then browse `http://127.0.0.1:18761/` (`?appearance=dark`, `/register?state=receipt`) and `http://127.0.0.1:18762/admin/`. [Preview Script](https://github.com/YouZiFeiLe/Chirp/blob/main/Client/Branding/design-system/preview-web.py) · [Design Tokens](https://github.com/YouZiFeiLe/Chirp/blob/main/Client/Branding/design-system/design-tokens.json)
 - **macOS offline previews**: Run `./scripts/build_and_run.sh --design-preview`, or append `--identity-setup-preview`, `--attachment-transfer-preview`, `--room-information-preview`, or `--device-verification-preview`. [Icon Export Script](https://github.com/YouZiFeiLe/Chirp/blob/main/scripts/export-apple-icons.py)
 
 ## Localization & Error Code Sync

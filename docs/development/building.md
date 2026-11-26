@@ -100,7 +100,7 @@ sh scripts/test-open-source-compose.sh chirp-server:local-check
 
 无需启动数据库或 LiveKit，即可在本地直接预览 Passkey 网页、管理台与 Mac 客户端界面样式：
 
-- **网页离线预览**：运行 `python3 design-system/chirp-together/preview-web.py`（依赖 Python 3.9+），随后在浏览器访问 `http://127.0.0.1:18761/` 查看登录与注册页（支持 `?appearance=dark`、`/register?state=receipt` 等参数），或访问 `http://127.0.0.1:18762/admin/` 查看管理台界面。[预览脚本](https://github.com/YouZiFeiLe/Chirp/blob/main/design-system/chirp-together/preview-web.py) · [设计令牌](https://github.com/YouZiFeiLe/Chirp/blob/main/design-system/chirp-together/design-tokens.json)
+- **网页离线预览**：运行 `python3 Client/Branding/design-system/preview-web.py`（依赖 Python 3.9+），随后在浏览器访问 `http://127.0.0.1:18761/` 查看登录与注册页（支持 `?appearance=dark`、`/register?state=receipt` 等参数），或访问 `http://127.0.0.1:18762/admin/` 查看管理台界面。[预览脚本](https://github.com/YouZiFeiLe/Chirp/blob/main/Client/Branding/design-system/preview-web.py) · [设计令牌](https://github.com/YouZiFeiLe/Chirp/blob/main/Client/Branding/design-system/design-tokens.json)
 - **macOS 客户端离线预览**：在 Mac 运行 `./scripts/build_and_run.sh --design-preview`，也可附加 `--identity-setup-preview`、`--attachment-transfer-preview`、`--room-information-preview` 或 `--device-verification-preview` 查看各关键交互流。[图标导出脚本](https://github.com/YouZiFeiLe/Chirp/blob/main/scripts/export-apple-icons.py)
 
 ## 国际化文案与错误码维护

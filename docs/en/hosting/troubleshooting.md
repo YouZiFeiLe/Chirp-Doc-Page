@@ -56,7 +56,7 @@ curl -sS -o /dev/null -w '%{http_code}\n' http://127.0.0.1:7880/rtc/v1/validate
 ## 4. Browser Loads, Registration or Login Fails
 
 - **Passkey errors or origin mismatch**: Open `/register` directly, confirm trusted TLS without warnings, and verify `CHIRP_PUBLIC_ORIGIN` in `.env` matches the browser and client URL character-for-character (including port). Re-run `sudo docker compose up -d --wait --wait-timeout 600` after editing `.env`.
-- **Stuck "Pending Approval"**: Approve requests in `/admin/` → **Registrations**, or run `chirp admin bootstrap` for a fresh database's first account. [Verification](./verification.md)
+- **Stuck "Pending Approval"**: Approve requests in `/admin/` → **Requests**, or run `chirp admin bootstrap` for a fresh database's first account. [Verification](./verification.md)
 - **`NETWORK_TIME_REQUIRED`**: Device clock drifted too far or NTP (`123/UDP`) is blocked; enable automatic network time sync and retry.
 - **Other device kicked offline**: Expected—Chirp allows only one active client login session per account at a time.
 

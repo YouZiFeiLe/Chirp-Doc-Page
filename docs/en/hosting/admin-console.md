@@ -4,7 +4,7 @@ Chirp provides a built-in web admin console at `/admin/` on your server's public
 
 ## Authentication & Permission Boundaries
 
-1. Sign in with Passkey at `/`; accounts holding the admin role see a link to **Admin Space** (or open `/admin/` directly).
+1. Sign in with Passkey at `/`; accounts holding the admin role see a link to **Open admin console** (or open `/admin/` directly).
 2. Disabling, deleting, or CLI-demoting an administrator immediately invalidates their active browser sessions.
 3. Supports live Chinese/English switching and light/dark theming; destructive actions (deleting rooms, revoking devices, banning accounts) prompt confirmation and record audit entries.
 
@@ -14,46 +14,47 @@ Chirp provides a built-in web admin console at `/admin/` on your server's public
 
 ### 1. Members
 
-Inspect every approved member's enabled status, active room placement, creation date, and current login session, with instant filtering (**All / Enabled / Disabled**).
+Inspect every approved member's account status (**Active / Banned**), current room placement, join date, and app session, with instant search and filtering (**All / Active / Banned**).
 
-- **Edit member**: Rename display name (1–80 chars, synced on next room join) or toggle enabled state (disabling immediately terminates active media connections and locks login).
-- **Revoke active session**: Disconnects the current native client Bearer token without banning the account—the user can sign back in via Passkey anytime.
-- **Inspect devices & permanent blacklist**: View each registered device (name, platform, fingerprint, created/last-used timestamps) and audit the global **Permanent Blacklist**.
+- **Rename member**: Click **Edit** to open the **Rename member** dialog (1–80 chars, synced on next room join).
+- **Ban permanently**: Use the row-level **Ban permanently** action to immediately terminate active sessions, disconnect all voice rooms, and place the account and all associated devices on the immutable blacklist (username remains reserved).
+- **Sign out session**: Forces the current native client session to sign out without banning the account—the user can sign back in via Passkey anytime.
+- **Devices & permanent blacklist**: Click **Devices** to inspect registered hardware (name, platform, device fingerprint, first-registered and last sign-in timestamps), or audit the global **Permanent blacklist**.
   > [!CAUTION] Revoking a member's last valid device bans the account permanently
   > Self-service clients prevent users from revoking their own last device. In `/admin/`, admins *can* revoke any device; revoking an account's **final active device** (even your own admin account) adds both account and device to the immutable blacklist permanently—the handle is never freed and `.chirpkey` cannot unban it.
 - **Delete member**: Removes the account and drops active media sessions, guarded by **Last-Administrator Protection** so you cannot lock yourself out by deleting or disabling the sole remaining admin.
 
-### 2. Registrations
+### 2. Requests (Applications)
 
 Review incoming `/register` requests (the server retains at most **100 pending registrations** at a time—prune stale unclaimed entries periodically):
 
-- **Registration toggle (Open / Closed)**: Pause new registrations globally with one click. While closed, `/register` rejects new submissions, yet **admins can still approve or delete earlier pending entries** and existing members sign in normally. If locked out with registration closed, run `chirp admin reopen-registration` via CLI.
-- **Verify Request ID & Approve / Delete**: Ask applicants for their exact `CHIRP-...` receipt ID, match username + request ID in search, and click **Approve** (or **Delete** lost receipts so they can reapply).
+- **Accept new applications switch**: Toggle whether new `/register` submissions are accepted globally (accompanied by an **Open / Paused** status badge). While switched off (**Paused**), `/register` rejects new submissions, yet **admins can still approve or delete earlier pending entries** and existing members sign in normally. If locked out with registration paused, run `chirp admin reopen-registration` via CLI.
+- **Verify Request ID & Approve / Delete**: Filter by **Pending / Approved / All**, use the inline **Copy** button next to any `CHIRP-...` ID, match nickname + application ID, and click **Approve** (or **Delete** lost receipts so applicants can reapply).
 
-### 3. Rooms
+### 3. Rooms (Voice rooms)
 
-Fresh servers include a non-deletable default lobby (**Public Lobby**, internal ID `friends`) which you can freely rename, describe, or password-protect.
+Uses a master-detail workspace with a **Rooms** directory on the left and live settings/participants on the right. Fresh servers include a non-deletable default lobby (**Public lobby**, internal ID `friends`, badged **Default lobby**) whose delete button stays hidden while still allowing renames, descriptions, and passwords.
 
-- **Create & delete rooms**: Spin up extra voice channels anytime. Deleting an active room immediately terminates room authorizations and media sessions while keeping members logged into the directory.
-- **Name & description**: Names allow 1–80 chars; descriptions allow 1–280 multiline chars (saving empty resets defaults). Changes broadcast live without interrupting active calls.
-- **Room password**: Optional **8–128 char** password (up to 512 UTF-8 bytes; leading/trailing spaces preserved verbatim), hashed with a random 16-byte salt and [Argon2id](https://datatracker.ietf.org/doc/html/rfc9106). To stop online brute-forcing, the server enforces a **5 failed attempts per 30 seconds** limit per member per room (`429 ROOM_PASSWORD_RATE_LIMITED`, tracking up to 256 active member/room windows).
+- **Add & delete rooms**: Click **Add room** in the header to create channels in a modal dialog; deleting a custom room from its **Danger zone** immediately terminates room authorizations and media sessions while keeping members signed in.
+- **Name & description**: Names allow 1–80 chars; descriptions allow 1–280 multiline chars with a live `0 / 280` counter (saving empty resets defaults). Changes sync live without interrupting active calls.
+- **Entry password**: Optional **8–128 char** password (up to 512 UTF-8 bytes; leading/trailing spaces preserved verbatim; includes a show/hide password toggle), hashed with a random 16-byte salt and [Argon2id](https://datatracker.ietf.org/doc/html/rfc9106). To stop online brute-forcing, the server enforces a **5 failed attempts per 30 seconds** limit per member per room (`429 ROOM_PASSWORD_RATE_LIMITED`, tracking up to 256 active member/room windows).
   ::: info Password updates apply to new entries only
-  Changing or removing a room password **affects only subsequent joins**; current callers remain connected, and passwords never participate in voice encryption. Use **Remove Member** or **End Call** to clear a room immediately.
+  Changing or removing a room password **affects only subsequent joins**; current callers remain connected, and passwords never participate in voice encryption. Use **Remove** or **End current call** to clear a room immediately.
   :::
-- **Live participants & moderation**: View active LiveKit callers, kick individual members (revokes that room entry only), or click **End Current Call** to close all secure groups and media sessions in that room.
+- **Active media connections & moderation**: View active LiveKit callers, kick individual members (**Remove** revokes that room entry only), or click **End current call** to close all secure groups and media sessions in that room.
 
-### 4. Client Versions
+### 4. Versions (Client versions)
 
-Configure independent minimum version policies for `ios`, `macos`, `windows`, and `android` (applies immediately to new discovery/login checks without dropping active calls):
+Four interactive platform selector cards (`iOS`, `macOS`, `Windows`, `Android`; displaying an **Unsaved** badge for unpersisted edits) feed a paired policy editor below—applies immediately to new discovery/login checks without dropping active calls:
 
 | Field | Format & Rule | Effect |
 | --- | --- | --- |
-| **Latest Version / Build** | Three integers (e.g., `2026.11.24`) + positive build integer | Signals available updates to clients. |
-| **Minimum Version / Build** | Must not exceed the corresponding latest version/build | Compares 3-part tuple first, then build integer. Older clients fail discovery, code exchange, or QR claim with `CLIENT_UPDATE_REQUIRED`. |
+| **Latest version / build** | Three integers (e.g., `2026.11.24`) + positive build integer | Signals available updates to clients. |
+| **Minimum supported version / build** | Must not exceed the corresponding latest version/build | Compares 3-part tuple first, then build integer. Older clients fail discovery, code exchange, or QR claim with `CLIENT_UPDATE_REQUIRED`. |
 
-### 5. System
+### 5. Status (Service status)
 
-Real-time health summary: enabled member count, callers online, pending requests, LiveKit management connectivity, SQLite engine version, transport (`UDP · E2EE`), and quick `/healthz` test trigger.
+Four clickable overview cards at the top summarize **Active members**, **In voice rooms**, **Pending requests**, and **Voice service** health; the Status view displays LiveKit management API connectivity, SQLite engine version, transport (`UDP · End-to-end encrypted`), single-device session enforcement, and a quick **Health endpoint** link (`/healthz`).
 
 ## Administrator CLI Reference
 

@@ -39,7 +39,7 @@ Chirp ships with zero default admin logins or passwords. The initial administrat
 `admin bootstrap` targets a fresh empty database and succeeds only once. To promote additional admins or recover if all existing admins lose Passkeys, use `chirp admin grant` on the server CLI. [Admin Console Guide](./admin-console.md)
 :::
 
-4. **Approve a second account for testing**: Have a friend submit `/register` from their device, share their Request ID, and approve them inside `/admin/` → **Registrations**.
+4. **Approve a second account for testing**: Have a friend submit `/register` from their device, share their Request ID, and approve them inside `/admin/` → **Requests**.
 
 ## Step 3: Two-Party Bidirectional Voice Check
 
