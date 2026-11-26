@@ -13,7 +13,7 @@ import SourceEdition from './.vitepress/theme/components/SourceEdition.vue'
 import DocumentDirectory from './.vitepress/theme/components/DocumentDirectory.vue'
 </script>
 
-# Chirp 文档
+# Chirp 知识库
 
 <SourceEdition />
 
