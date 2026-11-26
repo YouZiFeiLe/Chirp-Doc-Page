@@ -1,5 +1,5 @@
 ---
-title: Chirp 文档
+title: Chirp 知识库
 titleTemplate: false
 aside: false
 prev: false
