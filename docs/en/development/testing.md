@@ -136,7 +136,7 @@ Pair combinations across macOS, iOS, Android, and Windows, swapping talker/liste
 - [ ] **ID-02 / ID-02a / ID-02b｜P0** First login enforces ≥16 Unicode scalar / ≤1024 UTF-8 passphrase + `.chirpkey` export; rejects short/oversized inputs, preserves leading/trailing spaces; file save cancel retries cleanly; import asks for file before passphrase.
 - [ ] **ID-03｜P0** Full warning text readable; 5s confirmation timer blocks fast taps, keyboard, and VoiceOver activation, pauses in background, and never auto-submits.
 - [ ] **ID-04｜P0** Force-killing before encrypt, after local staging, after export, after confirmation, and mid-request resumes cleanly using the staged root key upon next login.
-- [ ] **ID-05｜P0** Cross-platform `.chirpkey` export/import (e.g., iOS → Mac, Android → Windows) passes; `CHIRPKEY` magic validated; legacy `CHRIPKEY`, bad passwords, and wrong server origins rejected.
+- [ ] **ID-05｜P0** Cross-platform `.chirpkey` export/import (e.g., iOS → Mac, Android → Windows) passes; `CHIRPKEY` magic validated; bad passwords and wrong server origins rejected.
 - [ ] **ID-06｜P1** Measure Argon2id `64 MiB / 3 / 4` latency and peak RSS on target hardware; verify zero draft leaks in sandbox or plaintext seeds in vaults.
 - [ ] **DEV-01 / DEV-02｜P0** Device rename sync, camera & image pairing; self-revoke blocks current/final device; admin final-device ban enforced; revoking ancestor spares existing descendants.
 - [ ] **DEV-03 / DEV-04｜P0** Gallery fallback on camera denial (PNG/JPEG/HEIC), 3-attempt manual 3×4-digit check on image import, replay/tamper/MAC-reflection rejection, old session survives until new device activates.

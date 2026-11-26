@@ -10,7 +10,6 @@
 ## 文件命名与魔数识别
 
 - **文件扩展名与魔数**：扩展名固定为 **`.chirpkey`**，文件开头的 8 个字节必须为 ASCII 字符串 **`CHIRPKEY`**（Apple UTI 类型标识为 `cn.youzifeile.chirp.chirpkey`）。
-- **拒绝已退役旧格式**：四个客户端均严格按文件头魔数验证格式，**一律拒绝**带有早期旧文件头 `CHRIPKEY` 的文件——即使手动把 `.chripkey` 重命名为 `.chirpkey` 也会被拒收；强行篡改文件头字节则会使末尾 GCM 认证标签失效。
 - **默认建议文件名**：`<用户名>_<YYYY-MM-DD>_<来源平台>.chirpkey`（例如 `alice_2026-11-21_iOS.chirpkey`，日期取本机日历日期并过滤非法路径字符）。由于默认文件名会暴露用户名和导出时间，用户可以在系统保存面板中自由改名，恢复时客户端仅依赖通过加密认证后的载荷和当前登录会话。
 
 ## 密码约束与内存安全
@@ -68,5 +67,4 @@
 仓库中提供了跨语言测试向量文件 [`recovery-v1.json`](https://github.com/YouZiFeiLe/Chirp/blob/main/internal/identity/testdata/recovery-v1.json)（由 [Go 向量生成器](https://github.com/YouZiFeiLe/Chirp/blob/main/scripts/identity-vectors/main.go) 生成）：
 
 - `file` 字段为 Base64 包装的完整 453 字节 v1 测试文件（`N = 383`），使用 `password` 原样解密后的字节流必须与 `payload` 的 UTF-8 字节完全相等。
-- `retired_file` 为相同密码加密的旧版 `CHRIPKEY` 样本，各端测试均须验证它会被明确拒绝。
 - 实现与回归入口：[共享 Rust 编解码器](https://github.com/YouZiFeiLe/Chirp/blob/main/Client/apple/MLS/native/src/recovery.rs) · [Apple 原生桥接测试](https://github.com/YouZiFeiLe/Chirp/blob/main/Client/apple/MLS/Tests/ChirpMLSTests/RecoveryVectorTests.swift) · [Apple 恢复逻辑](https://github.com/YouZiFeiLe/Chirp/blob/main/Client/apple/Shared/RecoveryFile.swift) · [Windows 恢复流程](https://github.com/YouZiFeiLe/Chirp/blob/main/Client/windows/engine/login_windows.go) · [Android 恢复流程](https://github.com/YouZiFeiLe/Chirp/blob/main/Client/android/app/src/main/kotlin/cn/youzifeile/chirp/data/IdentitySetup.kt)
