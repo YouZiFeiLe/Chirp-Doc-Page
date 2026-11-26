@@ -17,10 +17,6 @@ import DocumentDirectory from './.vitepress/theme/components/DocumentDirectory.v
 
 <SourceEdition />
 
-> **合规与法律声明**
->
-> 本项目以技术分享为目的，作者不运营任何公开通信服务、不提供持续技术支持、不获取收入或对价。使用本项目前，请阅读 [`COMPLIANCE.md`](https://github.com/YouZiFeiLe/Chirp/blob/main/COMPLIANCE.md)，其中包含项目定位、密码学出口管制、GDPR 对接说明及中国法下的使用边界。使用、复制、分发或部署本项目，即表示你已阅读并理解该文件全部内容。
-
 <div class="reader-note" role="note">
 <Info class="note-icon" :size="17" aria-hidden="true" />
 
