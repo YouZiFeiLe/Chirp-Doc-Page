@@ -39,7 +39,7 @@
 
 Official documentation portal for **[Chirp](https://github.com/YouZiFeiLe/Chirp)** covering member onboarding, Docker Compose self-hosting, deep-dives across all 4 native clients, the V5 E2EE protocol specification, source-level security assessment notes, and build/QA checklists:
 
-- **🌐 Full Bilingual Site + Browser Auto-Detection**: Ships **32 Simplified Chinese + 32 English** matching pages (64 documentation articles total). Automatically directs non-Chinese browser locales to `/en/` on first visit while honoring manual navbar language switcher choices via `localStorage`.
+- **🌐 Full Bilingual Site + Browser Auto-Detection**: Ships **34 Simplified Chinese + 34 English** matching pages (68 documentation articles total). Automatically directs non-Chinese browser locales to `/en/` on first visit while honoring manual navbar language switcher choices via `localStorage`.
 - **📊 Interactive Bilingual Diagrams & Utilities**: 14 custom reactive Vue + SVG diagrams (network topology, Passkey/QR sign-in, device trust hierarchy, group state machine, smooth rotation, admin session cascade, attachment lifecycle, `.chirpkey`/`.chirplog` layouts) plus an interactive deployment picker and live error-code filter.
 - **📱 4-Client Architecture & Security Audit**: Dedicated implementation breakdowns for Apple (macOS/iOS), Android, and Windows alongside unified design tokens and a source-verified E2EE chain assessment report.
 - **🕒 Automatic Timestamps & Pinned Source Links**: Renders exact per-page `Last updated` timestamps directly beneath each `<h1>`, and pins `blob/main` / `tree/main` GitHub links to the verified commit in [upstream.json](upstream.json) during build.
@@ -93,6 +93,7 @@ Static output lands in `docs/.vitepress/dist/` with clean URLs and a standalone 
 | Client Architecture & Design (4 pages) | [`docs/clients/`](docs/clients/) | [`docs/en/clients/`](docs/en/clients/) |
 | Protocols & Security Audit (9 pages) | [`docs/reference/`](docs/reference/) | [`docs/en/reference/`](docs/en/reference/) |
 | Builds & Manual QA (3 pages) | [`docs/development/`](docs/development/) | [`docs/en/development/`](docs/en/development/) |
+| Changelog & Releases (2 pages) | [`docs/changelog/`](docs/changelog/) | [`docs/en/changelog/`](docs/en/changelog/) |
 | VitePress Config & Sidebars | [`docs/.vitepress/config.ts`](docs/.vitepress/config.ts) · [`navigation.ts`](docs/.vitepress/navigation.ts) | Shared |
 | Env Snippets & Error Data | [`docs/.vitepress/snippets/`](docs/.vitepress/snippets/) · [`apple-errors.inc.md`](docs/.vitepress/data/apple-errors.inc.md) | Shared |
 | Theme, Diagrams & Filters | [`docs/.vitepress/theme/`](docs/.vitepress/theme/) | Reactive via `lang` |

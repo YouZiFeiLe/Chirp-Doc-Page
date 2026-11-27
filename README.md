@@ -39,7 +39,7 @@
 
 本项目是 **[Chirp](https://github.com/YouZiFeiLe/Chirp)** 的独立文档知识库，涵盖成员入门指南、Docker Compose 自托管运维、四大原生客户端专题、V5 端到端加密协议规范、安全评估报告以及本地编译验收手册：
 
-- **🌐 全站中英双语 + 浏览器自适应**：完整提供 **32 篇简体中文 + 32 篇英文** 对等页面（共 64 篇正文章节）。首次访问会根据浏览器语言自动切换至英文站（`/en/`）或中文站，并持久化记录用户在导航栏的手动切换偏好。
+- **🌐 全站中英双语 + 浏览器自适应**：完整提供 **34 篇简体中文 + 34 篇英文** 对等页面（共 68 篇正文章节）。首次访问会根据浏览器语言自动切换至英文站（`/en/`）或中文站，并持久化记录用户在导航栏的手动切换偏好。
 - **📊 交互式图解与实用工具**：内置 14 张随语言自动切换的 Vue + SVG 原理图（网络拓扑、Passkey / QR 登录、设备信任树、群组状态机、平滑换钥、管理台级联失效、附件加密流、`.chirpkey` / `.chirplog` 结构等），以及部署路线选择器与错误码即时筛选器。
 - **📱 四端架构专题与安全审计报告**：系统拆解 Apple（macOS / iOS）、Android、Windows 的模块实现与 E2EE 链路细节，并附带基于源码静态审查的安全扫描与加密链路评估报告。
 - **🕒 自动更新时间与源码快照锚定**：每篇文档主标题下方自动显示最近更新时间（`UTC+8` / `UTC`）；正文中指向产品仓库 `blob/main`、`tree/main` 的源码链接会在构建期自动固定至 [upstream.json](upstream.json) 指定的精确 Commit。
@@ -93,6 +93,7 @@ npm run preview
 | 四端客户端与统一设计（4 篇） | [`docs/clients/`](docs/clients/) | [`docs/en/clients/`](docs/en/clients/) |
 | 架构、安全评估与协议规范（9 篇） | [`docs/reference/`](docs/reference/) | [`docs/en/reference/`](docs/en/reference/) |
 | 编译构建与人工验收（3 篇） | [`docs/development/`](docs/development/) | [`docs/en/development/`](docs/en/development/) |
+| 更新日志与版本说明（2 篇） | [`docs/changelog/`](docs/changelog/) | [`docs/en/changelog/`](docs/en/changelog/) |
 | 站点配置与双语侧边栏 | [`docs/.vitepress/config.ts`](docs/.vitepress/config.ts) · [`navigation.ts`](docs/.vitepress/navigation.ts) | 共用配置 |
 | 共享环境变量与错误码表 | [`docs/.vitepress/snippets/`](docs/.vitepress/snippets/) · [`apple-errors.inc.md`](docs/.vitepress/data/apple-errors.inc.md) | 共用数据 |
 | 主题样式、原理图与交互组件 | [`docs/.vitepress/theme/`](docs/.vitepress/theme/) | 响应 `lang` 自动切换 |

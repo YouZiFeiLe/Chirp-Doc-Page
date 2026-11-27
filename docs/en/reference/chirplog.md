@@ -40,7 +40,7 @@ All **12 tables** always exist (even when empty):
 | --- | --- | --- |
 | `application` | App lifecycle, runtime env, write overflows | `launch`, `active`, `background`, `storageOverflow` |
 | `navigation` | Screen visits & toggles | `room`, `roomChat`, `friends`, `settings`, `logSettings` |
-| `account` | Passkey/QR sign-in, sign-out, profile | `browserLogin`, `phoneLogin`, `loginAccepted`, `sessionEnded`, `logout` |
+| `account` | Passkey/QR sign-in, cold-launch unlock, sign-out, profile | `browserLogin`, `phoneLogin`, `loginAccepted`, `saveLoginForRelaunch`, `loginWithoutResumptionGrant`, `sessionEnded`, `logout` |
 | `identity` | Pairing, `.chirpkey`, SAS checks, friends | `approveDevice`, `verifyBackup`, `verificationMismatch`, `removeFriend` |
 | `network` | HTTP/SSE timings, codes, retries | `preflight`, `groupHeartbeat`, `mediaLease`, `rotationActivate`, `eventStreamEnded` |
 | `room` | Room entry operations | `join` |

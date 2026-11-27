@@ -33,5 +33,5 @@ This table indexes client-side error codes as well as server codes mapped consis
 ::: info Localization & Privacy Rules
 Clients parse canonical `error.code` and structured `client_policy` fields only—never displaying unvalidated raw server `error.message` strings or storing tokens, keys, or plaintext chat inside errors. Unrecognized server codes fold into `CLIENT_UNKNOWN_SERVER_ERROR`.
 
-Verify definitions directly in <a :href="clientErrorSwift"><code>ClientError.swift</code></a> and <a :href="enErrors"><code>en.lproj/Errors.strings</code></a>, or consult [Troubleshooting](/en/hosting/troubleshooting).
+Verify definitions directly in <a :href="clientErrorSwift"><code>ClientError.swift</code></a> and <a :href="enErrors"><code>en.lproj/Errors.strings</code></a> (Windows additionally distinguishes <code>LOGIN_STORAGE_UNAVAILABLE</code> and <code>HELLO_KEY_UNAVAILABLE</code> for local Hello storage/key readiness), or consult [Troubleshooting](/en/hosting/troubleshooting).
 :::

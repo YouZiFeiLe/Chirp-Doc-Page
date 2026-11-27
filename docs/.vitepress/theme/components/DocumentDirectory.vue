@@ -2,6 +2,7 @@
 import { computed } from 'vue'
 import {
   AudioLines,
+  History,
   Laptop,
   Network,
   Scale,
@@ -62,6 +63,12 @@ const entries = computed(() => {
           icon: SquareTerminal,
         },
         {
+          href: `${prefix}/changelog/`,
+          title: 'Changelog & Releases',
+          detail: 'Feature design rationales, protocol implementation notes, and Release verification history',
+          icon: History,
+        },
+        {
           href: `${prefix}/compliance`,
           title: 'Compliance & Legal Notice',
           detail: 'Project boundaries, cryptography export control, GDPR Art. 25, PRC law notice & disclaimer',
@@ -110,6 +117,12 @@ const entries = computed(() => {
           title: '参与开发与构建',
           detail: '构建 Go 服务端与四大原生客户端，运行协议回归与人工验收',
           icon: SquareTerminal,
+        },
+        {
+          href: '/changelog/',
+          title: '更新日志与版本说明',
+          detail: '各 Release 版本的优化设计方案、实现原理、安全边界与跨端验收记录',
+          icon: History,
         },
         {
           href: '/compliance',

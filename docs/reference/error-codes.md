@@ -33,5 +33,5 @@ const zhErrors = `https://github.com/${upstream.repository}/blob/${upstream.revi
 ::: info 错误码规范与隐私约束
 客户端在解析 HTTP 响应时只解码规范的 `error.code` 和结构化 `client_policy`，绝不直接向用户界面回显未经校验的服务端原始 `error.message`，也不在错误对象中保留令牌、密钥或聊天原文。未识别的未知码会统一归类为 `CLIENT_UNKNOWN_SERVER_ERROR` 并附带原始码供排查。
 
-若需要核对 Swift 枚举定义与双语本地化资源，可查阅源码中的 <a :href="clientErrorSwift"><code>ClientError.swift</code></a> 与 <a :href="zhErrors"><code>Errors.strings</code></a>，并结合[故障排查](/hosting/troubleshooting)进一步定位。
+若需要核对 Swift 枚举定义与双语本地化资源，可查阅源码中的 <a :href="clientErrorSwift"><code>ClientError.swift</code></a> 与 <a :href="zhErrors"><code>Errors.strings</code></a>（Windows 端针对本机恢复存储与 Windows Hello 密钥另单独区分了 <code>LOGIN_STORAGE_UNAVAILABLE</code> 与 <code>HELLO_KEY_UNAVAILABLE</code>），并结合[故障排查](/hosting/troubleshooting)进一步定位。
 :::

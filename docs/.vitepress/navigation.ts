@@ -63,6 +63,14 @@ export const zhSidebar: DefaultTheme.SidebarItem[] = [
       { text: '人工测试与验收', link: '/development/testing' },
     ],
   },
+  {
+    text: '更新日志',
+    collapsed: false,
+    items: [
+      { text: '版本发布概览', link: '/changelog/' },
+      { text: '2026.11.27-1 · 登录恢复与本机解锁', link: '/changelog/2026-11-27-1' },
+    ],
+  },
 ]
 
 export const enSidebar: DefaultTheme.SidebarItem[] = [
@@ -126,6 +134,14 @@ export const enSidebar: DefaultTheme.SidebarItem[] = [
       { text: 'Server Build & Testing', link: '/en/development/building' },
       { text: 'Native Client Builds', link: '/en/development/clients' },
       { text: 'Manual QA Checklist', link: '/en/development/testing' },
+    ],
+  },
+  {
+    text: 'Changelog',
+    collapsed: false,
+    items: [
+      { text: 'Release Overview', link: '/en/changelog/' },
+      { text: '2026.11.27-1 · Login Resumption', link: '/en/changelog/2026-11-27-1' },
     ],
   },
 ]

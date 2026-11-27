@@ -30,8 +30,8 @@ In **Voice Settings**, click **Local Mic Test** and **Stop & Listen** (mutually 
 ## Cross-Platform Window & Background Behavior
 
 - **macOS**: Closing the last window **keeps your call running in the background**; reopen any window to return to the same call, and press `Cmd + Q` to quit cleanly.
-- **Windows**: Clicking `×` on the last main window **ends the call immediately and terminates both `Chirp.exe` and `Chirp.Protocol.exe`**, notifying peers right away.
-- **iOS / Android**: Calls and scheduled key rotations survive screen lock and backgrounding (Android uses Core-Telecom + foreground service). **Force-swiping Chirp out of Recents** ends the call immediately and clears the memory-only login token.
+- **Windows**: Clicking `×` on the last main window **ends the call immediately and terminates both `Chirp.exe` and `Chirp.Protocol.exe`**, notifying peers right away. If Windows Hello login resumption is enabled and within the original expiry window, relaunching prompts Windows Hello to restore the account session (room re-entry is still required).
+- **iOS / Android**: Calls and scheduled key rotations survive screen lock and backgrounding (Android uses Core-Telecom + foreground service), and returning while the process is alive skips extra prompts. **Force-swiping Chirp out of Recents** terminates the call and RAM session immediately; if valid cold-launch resumption is stored within the 20-hour window, reopening prompts biometrics to resume (explicit sign-out or missing resumption falls back to Passkey).
 
 ## Display Name & Avatar
 

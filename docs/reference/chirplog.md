@@ -40,7 +40,7 @@
 | --- | --- | --- |
 | `application` | 应用生命周期、运行环境、写入溢出警告 | `launch`、`active`、`background`、`storageOverflow` |
 | `navigation` | 打开页面、切换视图、查看/收起详情 | `room`、`roomChat`、`friends`、`settings`、`logSettings` |
-| `account` | Passkey 浏览器/扫码登录、登出、个人资料 | `browserLogin`、`phoneLogin`、`loginAccepted`、`sessionEnded`、`logout` |
+| `account` | Passkey 浏览器/扫码登录、冷启动恢复解锁、登出、个人资料 | `browserLogin`、`phoneLogin`、`loginAccepted`、`saveLoginForRelaunch`、`loginWithoutResumptionGrant`、`sessionEnded`、`logout` |
 | `identity` | 设备授权、`.chirpkey` 恢复、SAS 核验与好友变更 | `approveDevice`、`verifyBackup`、`verificationMismatch`、`removeFriend` |
 | `network` | 核心 HTTP/SSE 请求的操作名、响应码、耗时与重试 | `preflight`、`groupHeartbeat`、`mediaLease`、`rotationActivate`、`eventStreamEnded` |
 | `room` | 房间操作与进出尝试 | `join` |

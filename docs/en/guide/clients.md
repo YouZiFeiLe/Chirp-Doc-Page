@@ -30,6 +30,10 @@ Ask your administrator for both the server HTTPS URL and matching installers. If
 
 <PasskeyQrLoginDiagram />
 
+::: tip Cold-Launch Resumption & Local Unlock (Starting `2026.11.27-1`)
+Once you complete a Passkey sign-in on a supported device (and enroll Windows Hello in General Settings if using Windows), closing or force-restarting Chirp within the original credential lifetime (the earlier of **20 hours** or device leaf certificate expiry) automatically prompts local OS verification (Face ID / Touch ID / Mac password, Android strong biometrics, or Windows Hello) to resume your session without reopening a browser. Explicitly signing out or letting the 20-hour window expire still requires Passkey authentication. [Release Notes (`2026.11.27-1`)](/en/changelog/2026-11-27-1)
+:::
+
 ## Common Installation & Login Issues
 
 - **Windows installer refuses to run**

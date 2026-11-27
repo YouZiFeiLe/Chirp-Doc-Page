@@ -20,7 +20,8 @@ Chirp 将「向服务器证明准入资格的凭证」与「终端之间加密�
 | **原生登录授权码** | 服务端存摘要，绑定发起客户端与 S256 PKCE。 | 一次性兑换，最长 **1 分钟**，且校验对应平台的固定回调地址。 |
 | **手机扫码登录请求** | 服务端短期记录，绑定客户端与私有 verifier。 | 最长 **3 分钟**；扫码批准后兑换为短期设置授权，最终激活成功才踢掉旧端。 |
 | **身份设置授权** | Passkey 登录兑换后的短期临时凭据（绑定 Origin、账号、PKCE 与公钥挑战）。 | 最长 **5 分钟**；仅限完成设备激活或配对，不能用于入房或读取目录。 |
-| **客户端业务 Bearer** | 服务端存 SHA-256 摘要，客户端仅存于进程内存不落盘。 | 取登录后 **20 小时**与设备叶证书到期时间的较早者；新设备登录成功即替换旧登录。 |
+| **客户端业务 Bearer** | 服务端存 SHA-256 摘要，客户端仅存于进程内存不落盘。 | 取登录后 **20 小时**与设备叶证书到期时间的较早者；新设备登录成功或冷启动恢复轮换时即替换旧 Bearer。 |
+| **登录恢复凭证（`resume_token`）** | 服务端存 SHA-256 摘要及所属 `origin`/`platform`/`login_id`；客户端经系统逐次本机验证绑定加密保存（Apple `biometryCurrentSet`/`userPresence` 钥匙串、Android `BIOMETRIC_STRONG` + Keystore RSA 封包、Windows 按需启用 Hello KSP `NCryptDecrypt`）。 | 与首次登录业务 Bearer 共享**同一绝对截止时间**；恢复时仍须目标设备用 V5 私钥签署 1 分钟单次挑战，主动注销、接管或撤销即刻失效。[设计说明](/changelog/2026-11-27-1) |
 | **入房预校验 Proof** | 由 `app` 进程内存随机秘钥签名的 [HMAC-SHA256](https://datatracker.ietf.org/doc/html/rfc2104)。 | 最长 **30 秒**，绑定登录、房间、序号与密码版本；`app` 重启后未使用的 Proof 立即失效。 |
 | **精确入房记录（`entry_id`）** | 服务端 SQLite（关联 `login`、`room`、`entry`）。 | 每次签发或心跳续期后最长 **30 秒**，且受当前登录到期时间约束。 |
 | **LiveKit JWT** | 由 `app` 与 `livekit` 共享的 `keys.json` 签发。 | 默认 **5 分钟**，仅授予发布麦克风、订阅轨道与发布数据通道权限。 |
@@ -35,7 +36,7 @@ Chirp 将「向服务器证明准入资格的凭证」与「终端之间加密�
 
 > [!NOTE] 不同平台的本地身份库与后台行为差异
 > - **Windows** 将设备私钥、证书和检查点以当前用户 DPAPI 加密保存于 `identities.v5`。[Vault 源码](https://github.com/YouZiFeiLe/Chirp/blob/main/Client/windows/engine/vault_windows.go)
-> - **Android** 使用 Android Keystore 密钥保护身份库与进行中的浏览器授权状态；若从系统最近任务中强行划掉应用进程，下次打开需重新执行 Passkey 登录。[IdentityVault 源码](https://github.com/YouZiFeiLe/Chirp/blob/main/Client/android/app/src/main/kotlin/cn/youzifeile/chirp/data/IdentityVault.kt)
+> - **Android** 使用 Android Keystore 密钥保护身份库与进行中的浏览器授权状态；若从系统最近任务中强行划掉应用进程，通话与内存 Bearer 会立即销毁，下次打开在有效 20 小时恢复窗口内通过 `BIOMETRIC_STRONG` 解锁并经设备签名恢复（主动退出或无恢复记录时需重新 Passkey 登录）。[IdentityVault 源码](https://github.com/YouZiFeiLe/Chirp/blob/main/Client/android/app/src/main/kotlin/cn/youzifeile/chirp/data/IdentityVault.kt) · [BiometricLoginVault 源码](https://github.com/YouZiFeiLe/Chirp/blob/main/Client/android/app/src/main/kotlin/cn/youzifeile/chirp/data/BiometricLoginVault.kt)
 > - **Android APK 签名说明**：开源版 Android 签名密钥库随源码公开，因此任何持有源码的人都能签出相同指纹的 APK，安装包来源仍需通过可信分发渠道核实。[Android 签名详情](/development/clients#android-发布签名与验证)
 
 ## 设备身份、配对与 SAS 互认机制

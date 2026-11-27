@@ -39,7 +39,7 @@ Chirp 采用「**轻量控制面 + 自托管 [SFU](https://en.wikipedia.org/wiki
 
 1. **版本准入与端点发现**：客户端向 `GET /v1/client-config` 发送请求，并携带 `X-Chirp-Platform`、`X-Chirp-Version` 和 `X-Chirp-Build` 三个请求头。服务端会校验最低支持版本，并返回 `passkey_origin`、各业务端点以及更新策略。[发现处理器](https://github.com/YouZiFeiLe/Chirp/blob/main/internal/httpapi/client_config.go) · [版本校验](https://github.com/YouZiFeiLe/Chirp/blob/main/internal/clienthttp/version.go)
 2. **Passkey 登录与 PKCE 授权**：原生客户端通过浏览器回调（`code` 仅 1 分钟有效；Windows 额外支持最多 60 秒指数退避浏览器接力轮询 `/api/auth/login/windows-handoff`）或手机跨端扫码（`3` 分钟有效）完成 WebAuthn 认证，并全部使用 **S256 [PKCE](https://datatracker.ietf.org/doc/html/rfc7636)** 绑定发起客户端。兑换成功后，客户端拿到一份有效期 **5 分钟**的「身份设置授权」。
-3. **本机设备激活与颁发 Bearer**：首次登录的设备会引导用户生成账号根并导出 `.chirpkey`；换机设备则导入 `.chirpkey` 或由旧设备扫码签发证书。随后客户端在 `/api/client/identity/challenge` 与 `/complete` 完成私钥持钥证明，服务端在同一事务中颁发有效期最长 **20 小时**（且不超过设备证书到期时间）的业务 Bearer，同时替换该账号的旧设备会话。[Passkey 路由](https://github.com/YouZiFeiLe/Chirp/blob/main/internal/passkeyhttp/server.go) · [凭据签发](https://github.com/YouZiFeiLe/Chirp/blob/main/internal/store/client_login.go)
+3. **本机设备激活与颁发 Bearer**：首次登录的设备会引导用户生成账号根并导出 `.chirpkey`；换机设备则导入 `.chirpkey` 或由旧设备扫码签发证书。随后客户端在 `/api/client/identity/challenge` 与 `/complete` 完成私钥持钥证明，服务端在同一事务中颁发有效期最长 **20 小时**（且不超过设备证书到期时间）的业务 Bearer，同时替换该账号的旧设备会话。携带 `X-Chirp-Login-Resumption: 1` 能力头的客户端还会获发 `resume_token`，供进程结束重开后通过 `/api/client/resume/challenge` 与 `/complete`（`Chirp login resumption v1` 设备签名）在原截止时间内换取新 Bearer。[Passkey 路由](https://github.com/YouZiFeiLe/Chirp/blob/main/internal/passkeyhttp/server.go) · [凭据签发](https://github.com/YouZiFeiLe/Chirp/blob/main/internal/store/client_login.go) · [冷启动恢复](https://github.com/YouZiFeiLe/Chirp/blob/main/internal/store/client_resumption.go)
 
 <PasskeyQrLoginDiagram />
 
@@ -70,7 +70,7 @@ Chirp 实行「**单账号单登录、单登录单入房**」的严格会话隔�
 
 | 持久化位置（容器路径） | 数据内容与管理策略 |
 | --- | --- |
-| `/data/chirp.db`（`data` 卷） | 主业务 SQLite（WAL 模式、`BEGIN IMMEDIATE` 写事务、仅支持空库或 schema `23`），存放成员、Passkey 公钥、登录摘要、房间、版本策略、黑名单及附件投递状态。[建表 SQL](https://github.com/YouZiFeiLe/Chirp/blob/main/internal/store/schema.sql) |
+| `/data/chirp.db`（`data` 卷） | 主业务 SQLite（WAL 模式、`BEGIN IMMEDIATE` 写事务、仅支持空库或 schema `23`），存放成员、Passkey 公钥、登录摘要、登录恢复记录（`client_login_resumptions`）、房间、版本策略、黑名单及附件投递状态。[建表 SQL](https://github.com/YouZiFeiLe/Chirp/blob/main/internal/store/schema.sql) |
 | `/data/authorization.db`（`data` 卷） | 独立授权日志 SQLite，按账号根保存设备登记、永久撤销与社交事件链；由 `CHIRP_AUTHORIZATION_KEY_FILE` 加载的种子签名。[密钥加载](https://github.com/YouZiFeiLe/Chirp/blob/main/internal/authorization/key.go) |
 | `/data/attachments/`（`data` 卷） | 临时密文分块目录。服务重启时自动清理失去投递资格的对象和孤立文件。[附件协议](/reference/attachments) |
 | `/var/lib/chirp-media/keys.json`（`media-keys` 卷） | 首次启动由 `app` 随机生成并写入，供 `livekit` 只读共享的 API 凭据。[密钥生成](https://github.com/YouZiFeiLe/Chirp/blob/main/internal/config/livekit_keys.go) |

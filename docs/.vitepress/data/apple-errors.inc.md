@@ -45,6 +45,8 @@
 | `CLIENT_INVALID_LOGIN_CALLBACK` | 登录回调地址不正确，请重试 | The sign-in callback is invalid. Please try again. |
 | `CLIENT_LOGIN_VERIFICATION_FAILED` | 登录校验不匹配或已失效，请重新登录 | Sign-in verification failed or expired. Please sign in again. |
 | `CLIENT_SECURE_LOGIN_FAILED` | 无法创建安全登录请求 | A secure sign-in request could not be created. |
+| `CLIENT_LOCAL_UNLOCK_FAILED` | 未能通过本机验证。请重试或使用通行密钥重新登录。 | Device verification failed. Try again or sign in with your passkey. |
+| `RESUMPTION_PROOF_INVALID` | 本次解锁请求未通过验证，请重试。 | This unlock request could not be verified. Try again. |
 | `CLIENT_INVALID_LOGIN_SESSION` | 服务器返回的登录信息无效 | The server returned invalid sign-in information. |
 | `CLIENT_LOGIN_INCOMPLETE` | 本次登录未完成或已失效，请重新认证 | Sign-in did not complete or has expired. Please sign in again. |
 | `CLIENT_LOGIN_EXPIRED` | 登录已到期，请重新使用 Passkey 认证 | Your session has expired. Please sign in again with your passkey. |
