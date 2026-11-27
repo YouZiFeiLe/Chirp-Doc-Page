@@ -3,14 +3,14 @@
 This section documents the **design rationale, protocol mechanics, security boundaries, and verification results** for each Chirp feature upgrade and cross-platform improvement, mapped directly to its GitHub Release tag.
 
 ::: info Versioning Convention
-Chirp releases follow **`YYYY.MM.DD-N`** (such as `2026.11.27-1`). Entries marked **Planned** indicate that the implementation and documentation are aligned ahead of publishing the final Release artifacts.
+Chirp releases follow **`YYYY.MM.DD-N`** (such as `2026.11.27-1`). Entries marked **Released** correspond to published [GitHub Releases](https://github.com/YouZiFeiLe/Chirp/releases); any entry marked **Planned** indicates aligned code and docs awaiting final tag publication.
 :::
 
 ## Release Index
 
 | Release Tag | Status | Date | Highlights | Scope |
 | --- | --- | --- | --- | --- |
-| [`2026.11.27-1`](/en/changelog/2026-11-27-1) | Planned | 2026-11-27 | **Native Client Login Resumption & Local Unlock**: Cross-platform cold-launch login resumption backed by OS-authenticated local storage and V5 device signatures; adds GitHub repository links across clients and web portals. | Go Server · macOS · iOS · Android · Windows |
+| [`2026.11.27-1`](/en/changelog/2026-11-27-1) | [Released](https://github.com/YouZiFeiLe/Chirp/releases/tag/2026.11.27-1) | 2026-11-27 | **Native Client Login Resumption & Local Unlock**: Cross-platform cold-launch login resumption backed by OS-authenticated local storage and V5 device signatures; adds GitHub repository links across clients and web portals. | Go Server · macOS · iOS · Android · Windows |
 
 ## How to Use These Notes
 
