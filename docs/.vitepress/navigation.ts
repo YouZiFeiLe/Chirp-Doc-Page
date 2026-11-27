@@ -2,6 +2,7 @@ import type { DefaultTheme } from 'vitepress'
 
 export const zhSidebar: DefaultTheme.SidebarItem[] = [
   { text: '文档首页', link: '/' },
+  { text: '合规与法律声明', link: '/compliance' },
   {
     text: '成员指南',
     collapsed: false,
@@ -66,6 +67,7 @@ export const zhSidebar: DefaultTheme.SidebarItem[] = [
 
 export const enSidebar: DefaultTheme.SidebarItem[] = [
   { text: 'Overview', link: '/en/' },
+  { text: 'Compliance & Legal Notice', link: '/en/compliance' },
   {
     text: 'Member Guide',
     collapsed: false,

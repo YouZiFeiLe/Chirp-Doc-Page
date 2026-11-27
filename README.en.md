@@ -39,7 +39,7 @@
 
 Official documentation portal for **[Chirp](https://github.com/YouZiFeiLe/Chirp)** covering member onboarding, Docker Compose self-hosting, deep-dives across all 4 native clients, the V5 E2EE protocol specification, source-level security assessment notes, and build/QA checklists:
 
-- **🌐 Full Bilingual Site + Browser Auto-Detection**: Ships **31 Simplified Chinese + 31 English** matching pages (62 documentation articles total). Automatically directs non-Chinese browser locales to `/en/` on first visit while honoring manual navbar language switcher choices via `localStorage`.
+- **🌐 Full Bilingual Site + Browser Auto-Detection**: Ships **32 Simplified Chinese + 32 English** matching pages (64 documentation articles total). Automatically directs non-Chinese browser locales to `/en/` on first visit while honoring manual navbar language switcher choices via `localStorage`.
 - **📊 Interactive Bilingual Diagrams & Utilities**: 14 custom reactive Vue + SVG diagrams (network topology, Passkey/QR sign-in, device trust hierarchy, group state machine, smooth rotation, admin session cascade, attachment lifecycle, `.chirpkey`/`.chirplog` layouts) plus an interactive deployment picker and live error-code filter.
 - **📱 4-Client Architecture & Security Audit**: Dedicated implementation breakdowns for Apple (macOS/iOS), Android, and Windows alongside unified design tokens and a source-verified E2EE chain assessment report.
 - **🕒 Automatic Timestamps & Pinned Source Links**: Renders exact per-page `Last updated` timestamps directly beneath each `<h1>`, and pins `blob/main` / `tree/main` GitHub links to the verified commit in [upstream.json](upstream.json) during build.
@@ -87,6 +87,7 @@ Static output lands in `docs/.vitepress/dist/` with clean URLs and a standalone 
 | Section | Chinese Source | English Source |
 | :--- | :--- | :--- |
 | Overview & Directory | [`docs/index.md`](docs/index.md) | [`docs/en/index.md`](docs/en/index.md) |
+| Compliance & Legal Notice | [`docs/compliance.md`](docs/compliance.md) · [`COMPLIANCE.md`](COMPLIANCE.md) | [`docs/en/compliance.md`](docs/en/compliance.md) · [`COMPLIANCE.md`](COMPLIANCE.md) |
 | Member Guide (5 pages) | [`docs/guide/`](docs/guide/) | [`docs/en/guide/`](docs/en/guide/) |
 | Self-Hosting & Ops (9 pages) | [`docs/hosting/`](docs/hosting/) | [`docs/en/hosting/`](docs/en/hosting/) |
 | Client Architecture & Design (4 pages) | [`docs/clients/`](docs/clients/) | [`docs/en/clients/`](docs/en/clients/) |
@@ -145,5 +146,5 @@ npm run build
 </div>
 
 <p align="center">
-  Text, icons, and offline preview screenshots derived from <a href="https://github.com/YouZiFeiLe/Chirp">Chirp</a> are licensed under <a href="LICENSE"><strong>GNU Affero General Public License v3.0 (AGPL-3.0-only)</strong></a>.
+  Text, icons, and offline preview screenshots derived from <a href="https://github.com/YouZiFeiLe/Chirp">Chirp</a> are licensed under <a href="LICENSE"><strong>GNU Affero General Public License v3.0 (AGPL-3.0-only)</strong></a>. Please read <a href="COMPLIANCE.md"><strong>COMPLIANCE.md</strong></a> before using or deploying this project.
 </p>

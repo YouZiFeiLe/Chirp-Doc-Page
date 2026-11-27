@@ -39,7 +39,7 @@
 
 本项目是 **[Chirp](https://github.com/YouZiFeiLe/Chirp)** 的独立文档知识库，涵盖成员入门指南、Docker Compose 自托管运维、四大原生客户端专题、V5 端到端加密协议规范、安全评估报告以及本地编译验收手册：
 
-- **🌐 全站中英双语 + 浏览器自适应**：完整提供 **31 篇简体中文 + 31 篇英文** 对等页面（共 62 篇正文章节）。首次访问会根据浏览器语言自动切换至英文站（`/en/`）或中文站，并持久化记录用户在导航栏的手动切换偏好。
+- **🌐 全站中英双语 + 浏览器自适应**：完整提供 **32 篇简体中文 + 32 篇英文** 对等页面（共 64 篇正文章节）。首次访问会根据浏览器语言自动切换至英文站（`/en/`）或中文站，并持久化记录用户在导航栏的手动切换偏好。
 - **📊 交互式图解与实用工具**：内置 14 张随语言自动切换的 Vue + SVG 原理图（网络拓扑、Passkey / QR 登录、设备信任树、群组状态机、平滑换钥、管理台级联失效、附件加密流、`.chirpkey` / `.chirplog` 结构等），以及部署路线选择器与错误码即时筛选器。
 - **📱 四端架构专题与安全审计报告**：系统拆解 Apple（macOS / iOS）、Android、Windows 的模块实现与 E2EE 链路细节，并附带基于源码静态审查的安全扫描与加密链路评估报告。
 - **🕒 自动更新时间与源码快照锚定**：每篇文档主标题下方自动显示最近更新时间（`UTC+8` / `UTC`）；正文中指向产品仓库 `blob/main`、`tree/main` 的源码链接会在构建期自动固定至 [upstream.json](upstream.json) 指定的精确 Commit。
@@ -87,6 +87,7 @@ npm run preview
 | 内容域 | 中文路径 | 英文路径 |
 | :--- | :--- | :--- |
 | 首页与目录 | [`docs/index.md`](docs/index.md) | [`docs/en/index.md`](docs/en/index.md) |
+| 合规与法律声明 | [`docs/compliance.md`](docs/compliance.md) · [`COMPLIANCE.md`](COMPLIANCE.md) | [`docs/en/compliance.md`](docs/en/compliance.md) · [`COMPLIANCE.md`](COMPLIANCE.md) |
 | 成员使用指南（5 篇） | [`docs/guide/`](docs/guide/) | [`docs/en/guide/`](docs/en/guide/) |
 | 自托管部署与运维（9 篇） | [`docs/hosting/`](docs/hosting/) | [`docs/en/hosting/`](docs/en/hosting/) |
 | 四端客户端与统一设计（4 篇） | [`docs/clients/`](docs/clients/) | [`docs/en/clients/`](docs/en/clients/) |
@@ -145,5 +146,5 @@ npm run build
 </div>
 
 <p align="center">
-  站内沿用的 Chirp 文案、客户端图标与离线预览截图来自 <a href="https://github.com/YouZiFeiLe/Chirp">Chirp 产品仓库</a>，遵循 <a href="LICENSE"><strong>GNU Affero General Public License v3.0（AGPL-3.0-only）</strong></a>。
+  站内沿用的 Chirp 文案、客户端图标与离线预览截图来自 <a href="https://github.com/YouZiFeiLe/Chirp">Chirp 产品仓库</a>，遵循 <a href="LICENSE"><strong>GNU Affero General Public License v3.0（AGPL-3.0-only）</strong></a>；使用或部署前请阅读 <a href="COMPLIANCE.md"><strong>COMPLIANCE.md 合规与法律声明</strong></a>。
 </p>

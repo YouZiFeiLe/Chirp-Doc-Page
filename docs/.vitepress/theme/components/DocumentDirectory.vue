@@ -1,6 +1,15 @@
 <script setup lang="ts">
 import { computed } from 'vue'
-import { AudioLines, Laptop, Network, Server, ShieldCheck, SquareTerminal, Wrench } from '@lucide/vue'
+import {
+  AudioLines,
+  Laptop,
+  Network,
+  Scale,
+  Server,
+  ShieldCheck,
+  SquareTerminal,
+  Wrench,
+} from '@lucide/vue'
 import { useData, withBase } from 'vitepress'
 
 const { lang } = useData()
@@ -52,6 +61,12 @@ const entries = computed(() => {
           detail: 'Build Go server & native clients, run protocol integration suites & QA checklists',
           icon: SquareTerminal,
         },
+        {
+          href: `${prefix}/compliance`,
+          title: 'Compliance & Legal Notice',
+          detail: 'Project boundaries, cryptography export control, GDPR Art. 25, PRC law notice & disclaimer',
+          icon: Scale,
+        },
       ]
     : [
         {
@@ -95,6 +110,12 @@ const entries = computed(() => {
           title: '参与开发与构建',
           detail: '构建 Go 服务端与四大原生客户端，运行协议回归与人工验收',
           icon: SquareTerminal,
+        },
+        {
+          href: '/compliance',
+          title: '合规与法律声明',
+          detail: '项目定位与边界、密码学出口管制、GDPR 第 25 条对接、中国法特别声明与一般免责',
+          icon: Scale,
         },
       ]
 })

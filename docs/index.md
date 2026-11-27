@@ -8,7 +8,7 @@ pageClass: docs-overview
 ---
 
 <script setup>
-import { Info } from '@lucide/vue'
+import { ArrowRight, Info, Scale } from '@lucide/vue'
 import SourceEdition from './.vitepress/theme/components/SourceEdition.vue'
 import DocumentDirectory from './.vitepress/theme/components/DocumentDirectory.vue'
 </script>
@@ -16,6 +16,20 @@ import DocumentDirectory from './.vitepress/theme/components/DocumentDirectory.v
 # Chirp 知识库
 
 <SourceEdition />
+
+<div class="compliance-banner" role="region" aria-label="合规与法律声明">
+  <div class="compliance-banner-body">
+    <Scale class="compliance-banner-icon" :size="20" aria-hidden="true" />
+    <div>
+      <p class="compliance-banner-title">合规与法律声明（COMPLIANCE.md）</p>
+      <p class="compliance-banner-desc">Chirp 是以技术分享为目的的开源项目，作者不运营任何公开通信服务、不提供持续技术支持、不获取收入或对价。使用、复制、分发、修改或部署本项目前，请务必阅读完整合规声明。</p>
+    </div>
+  </div>
+  <a class="compliance-banner-cta" href="/compliance">
+    <span>阅读完整声明</span>
+    <ArrowRight :size="16" aria-hidden="true" />
+  </a>
+</div>
 
 <div class="reader-note" role="note">
 <Info class="note-icon" :size="17" aria-hidden="true" />
