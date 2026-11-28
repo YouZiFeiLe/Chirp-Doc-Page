@@ -1,30 +1,277 @@
-import { statSync } from 'node:fs'
+import { existsSync, readFileSync, statSync } from 'node:fs'
 import { join } from 'node:path'
-import { defineConfig } from 'vitepress'
+import { defineConfig, type DefaultTheme, type HeadConfig } from 'vitepress'
 import { enSidebar, zhSidebar } from './navigation'
 import upstream from '../../upstream.json'
 
+const siteUrl = 'https://chirp.youzifeile.com'
+const socialImage = `${siteUrl}/social-preview.png`
 const sourceUrl = 'https://github.com/' + upstream.repository + '/'
 
-const autoLanguageScript = `;(function(){try{var p=location.pathname;if(p==='/en'||p.indexOf('/en/')===0)return;var s=localStorage.getItem('chirp-doc-lang');if(s==='zh-Hans')return;var l=(navigator.languages&&navigator.languages[0])||navigator.language||'';if(s==='en'||!/^zh\\b/i.test(l)){var t='/en'+(p==='/'?'/':p);location.replace(t+location.search+location.hash);}}catch(e){}})();`
+const autoLanguageScript = `;(function(){try{if(navigator.webdriver||/bot|crawl|spider|slurp|mediapartners|adsbot|bingpreview|lighthouse|pagespeed|headless/i.test(navigator.userAgent))return;var p=location.pathname;if(p==='/en'||p.indexOf('/en/')===0)return;var s=localStorage.getItem('chirp-doc-lang');if(s==='zh-Hans')return;var l=(navigator.languages&&navigator.languages[0])||navigator.language||'';if(s==='en'||!/^zh\\b/i.test(l)){var t='/en'+(p==='/'?'/':p);location.replace(t+location.search+location.hash);}}catch(e){}})();`
+
+function toCleanPath(relativePath: string): string {
+  const cleaned = relativePath.replace(/(^|\/)index\.md$/, '$1').replace(/\.md$/, '')
+  return '/' + cleaned
+}
+
+function stripMarkdown(text: string): string {
+  return text
+    .replace(/!\[([^\]]*)\]\([^)]+\)/g, '')
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
+    .replace(/`([^`]+)`/g, '$1')
+    .replace(/\*\*([^*]+)\*\*/g, '$1')
+    .replace(/\*([^*]+)\*/g, '$1')
+    .replace(/<[^>]+>/g, '')
+    .replace(/\s+/g, ' ')
+    .trim()
+}
+
+function truncateDescription(text: string, maxLength = 160): string {
+  if (text.length <= maxLength) return text
+  const slice = text.slice(0, maxLength - 3)
+  const isMostlyAscii = /^[\x00-\x7F]+$/.test(slice.slice(-20))
+  const boundary = isMostlyAscii ? slice.lastIndexOf(' ') : -1
+  const clipped = boundary > maxLength * 0.6 ? slice.slice(0, boundary) : slice
+  return clipped.trimEnd() + '...'
+}
+
+function extractDescription(markdown: string): string {
+  const body = markdown
+    .replace(/^---[\s\S]*?---\s*/, '')
+    .replace(/<script[\s\S]*?<\/script>/gi, '')
+    .replace(/<style[\s\S]*?<\/style>/gi, '')
+    .replace(/<!--[\s\S]*?-->/g, '')
+  const paragraphs: string[] = []
+  let current: string[] = []
+  let inCode = false
+  let divDepth = 0
+
+  const flush = () => {
+    if (current.length) {
+      paragraphs.push(current.join(' '))
+      current = []
+    }
+  }
+
+  for (const raw of body.split(/\r?\n/)) {
+    const line = raw.trim()
+    if (/^```|^~~~/.test(line)) {
+      inCode = !inCode
+      continue
+    }
+    if (inCode) continue
+    if (/^<div\b/i.test(line)) {
+      divDepth++
+      continue
+    }
+    if (/^<\/div>/i.test(line)) {
+      divDepth = Math.max(0, divDepth - 1)
+      continue
+    }
+    if (divDepth > 0) continue
+    if (
+      !line ||
+      /^:::\s*\w+/.test(line) ||
+      line === ':::' ||
+      /^#+\s/.test(line) ||
+      /^<[A-Z][A-Za-z0-9]*[^>]*\/>$/.test(line) ||
+      /^\|/.test(line) ||
+      /^>\s*\[!/.test(line) ||
+      /^---+$/.test(line)
+    ) {
+      flush()
+      continue
+    }
+    if (/^[-*]\s/.test(line) || /^\d+\.\s/.test(line)) {
+      if (paragraphs.length && /[:：]$/.test(paragraphs[paragraphs.length - 1])) {
+        paragraphs[paragraphs.length - 1] += ' ' + line.replace(/^([-*]|\d+\.)\s+/, '')
+      } else {
+        flush()
+      }
+      continue
+    }
+    current.push(line.replace(/^>\s?/, ''))
+  }
+  flush()
+
+  for (const paragraph of paragraphs) {
+    const cleaned = stripMarkdown(paragraph)
+    if (cleaned.length >= 20 && !/^项目：|^Project:/i.test(cleaned)) {
+      return truncateDescription(cleaned)
+    }
+  }
+  return ''
+}
+
+function findBreadcrumbs(
+  sidebar: DefaultTheme.SidebarItem[],
+  targetPath: string,
+  homeLabel: string,
+  homePath: string,
+): Array<{ name: string; item: string }> {
+  const crumbs = [{ name: homeLabel, item: siteUrl + homePath }]
+  for (const group of sidebar) {
+    if (group.link === targetPath) {
+      crumbs.push({ name: group.text ?? targetPath, item: siteUrl + targetPath })
+      return crumbs
+    }
+    const child = group.items?.find((item) => item.link === targetPath)
+    if (child) {
+      if (group.text) {
+        const groupTarget = group.items?.[0]?.link ?? homePath
+        crumbs.push({ name: group.text, item: siteUrl + groupTarget })
+      }
+      crumbs.push({ name: child.text ?? targetPath, item: siteUrl + targetPath })
+      return crumbs
+    }
+  }
+  return crumbs
+}
 
 export default defineConfig({
   title: 'Chirp Docs',
   cleanUrls: true,
   lastUpdated: true,
+  sitemap: {
+    hostname: siteUrl,
+  },
   head: [
     ['link', { rel: 'icon', type: 'image/png', href: '/chirp.png' }],
+    ['meta', { name: 'theme-color', content: '#246448' }],
     ['script', {}, autoLanguageScript],
   ],
   transformPageData(pageData) {
+    const filePath = join(process.cwd(), 'docs', pageData.relativePath)
     if (!pageData.lastUpdated) {
       try {
-        const filePath = join(process.cwd(), 'docs', pageData.relativePath)
         pageData.lastUpdated = Math.round(statSync(filePath).mtimeMs)
       } catch {
         pageData.lastUpdated = Date.now()
       }
     }
+    const isHome = pageData.relativePath === 'index.md' || pageData.relativePath === 'en/index.md'
+    if (!pageData.frontmatter.description && !isHome && pageData.relativePath !== '404.md') {
+      try {
+        const extracted = extractDescription(readFileSync(filePath, 'utf8'))
+        if (extracted) pageData.description = extracted
+      } catch {
+        // Fallback to locale description when file read fails.
+      }
+    }
+  },
+  transformHead({ pageData, title, description }) {
+    if (pageData.relativePath === '404.md') {
+      return [['meta', { name: 'robots', content: 'noindex, nofollow' }]]
+    }
+
+    const cleanPath = toCleanPath(pageData.relativePath)
+    const canonicalUrl = siteUrl + cleanPath
+    const isEn = pageData.relativePath === 'en/index.md' || pageData.relativePath.startsWith('en/')
+    const zhRel = isEn ? pageData.relativePath.slice(3) : pageData.relativePath
+    const enRel = isEn ? pageData.relativePath : 'en/' + pageData.relativePath
+    const hasZh = existsSync(join(process.cwd(), 'docs', zhRel))
+    const hasEn = existsSync(join(process.cwd(), 'docs', enRel))
+
+    const isHome = pageData.relativePath === 'index.md' || pageData.relativePath === 'en/index.md'
+    const siteName = isEn ? 'Chirp Docs' : 'Chirp 文档'
+    const imageAlt = isEn
+      ? 'Chirp — Self-hosted end-to-end encrypted voice rooms'
+      : 'Chirp — 自托管端到端加密语音房间文档'
+
+    const tags: HeadConfig[] = [
+      ['link', { rel: 'canonical', href: canonicalUrl }],
+      ['meta', { property: 'og:site_name', content: siteName }],
+      ['meta', { property: 'og:type', content: isHome ? 'website' : 'article' }],
+      ['meta', { property: 'og:locale', content: isEn ? 'en_US' : 'zh_CN' }],
+      ['meta', { property: 'og:locale:alternate', content: isEn ? 'zh_CN' : 'en_US' }],
+      ['meta', { property: 'og:title', content: title }],
+      ['meta', { property: 'og:description', content: description }],
+      ['meta', { property: 'og:url', content: canonicalUrl }],
+      ['meta', { property: 'og:image', content: socialImage }],
+      ['meta', { property: 'og:image:width', content: '1280' }],
+      ['meta', { property: 'og:image:height', content: '640' }],
+      ['meta', { property: 'og:image:alt', content: imageAlt }],
+      ['meta', { name: 'twitter:card', content: 'summary_large_image' }],
+      ['meta', { name: 'twitter:title', content: title }],
+      ['meta', { name: 'twitter:description', content: description }],
+      ['meta', { name: 'twitter:image', content: socialImage }],
+      ['meta', { name: 'twitter:image:alt', content: imageAlt }],
+    ]
+
+    if (hasZh && hasEn) {
+      const zhUrl = siteUrl + toCleanPath(zhRel)
+      const enUrl = siteUrl + toCleanPath(enRel)
+      tags.push(
+        ['link', { rel: 'alternate', hreflang: 'zh-Hans', href: zhUrl }],
+        ['link', { rel: 'alternate', hreflang: 'en', href: enUrl }],
+        ['link', { rel: 'alternate', hreflang: 'x-default', href: zhUrl }],
+      )
+    }
+
+    const inLanguage = isEn ? 'en' : 'zh-Hans'
+    const homeUrl = siteUrl + (isEn ? '/en/' : '/')
+    const webSiteNode = {
+      '@type': 'WebSite',
+      '@id': `${homeUrl}#website`,
+      name: siteName,
+      url: homeUrl,
+      inLanguage,
+      description,
+      image: socialImage,
+      sameAs: [
+        'https://github.com/YouZiFeiLe/Chirp',
+        'https://github.com/YouZiFeiLe/Chirp-Doc-Page',
+      ],
+    }
+
+    if (isHome) {
+      tags.push([
+        'script',
+        { type: 'application/ld+json' },
+        JSON.stringify({ '@context': 'https://schema.org', ...webSiteNode }),
+      ])
+    } else {
+      const breadcrumbs = findBreadcrumbs(
+        isEn ? enSidebar : zhSidebar,
+        cleanPath,
+        isEn ? 'Overview' : '文档首页',
+        isEn ? '/en/' : '/',
+      )
+      const modifiedIso = pageData.lastUpdated
+        ? new Date(pageData.lastUpdated).toISOString()
+        : undefined
+      const graph: Record<string, unknown>[] = [
+        {
+          '@type': 'TechArticle',
+          headline: pageData.title || title,
+          description,
+          url: canonicalUrl,
+          inLanguage,
+          image: socialImage,
+          ...(modifiedIso ? { dateModified: modifiedIso } : {}),
+          isPartOf: { '@id': `${homeUrl}#website`, '@type': 'WebSite', name: siteName, url: homeUrl },
+        },
+      ]
+      if (breadcrumbs.length > 1) {
+        graph.push({
+          '@type': 'BreadcrumbList',
+          itemListElement: breadcrumbs.map((crumb, index) => ({
+            '@type': 'ListItem',
+            position: index + 1,
+            name: crumb.name,
+            item: crumb.item,
+          })),
+        })
+      }
+      tags.push([
+        'script',
+        { type: 'application/ld+json' },
+        JSON.stringify({ '@context': 'https://schema.org', '@graph': graph }),
+      ])
+    }
+
+    return tags
   },
   markdown: {
     config(md) {
